@@ -1,18 +1,14 @@
 package com.example.swipepeople.view.fragment
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DefaultItemAnimator
-import com.example.swipepeople.R
 import com.example.swipepeople.data.model.ArchivedUser
 import com.example.swipepeople.data.model.User
 import com.example.swipepeople.databinding.FragmentPeopleBinding
@@ -34,7 +30,7 @@ class PeopleFragment : BaseFragment(), CardStackListener {
         get() = _binding!!
 
     private val viewModel: PeopleViewModel by activityViewModels()
-    private var adapter: PeopleAdapter? = null
+    private lateinit var peopleAdapter: PeopleAdapter
     private var archivedUser: ArchivedUser? = null
 
     override fun onCreateView(
@@ -86,8 +82,9 @@ class PeopleFragment : BaseFragment(), CardStackListener {
                             userList.get(0).user.picture,
                             userList.get(0).user.phone
                         )
-                        adapter = PeopleAdapter(userList)
-                        binding.stackView.adapter = adapter
+                        peopleAdapter = PeopleAdapter(userList)
+                        binding.stackView.adapter = peopleAdapter
+                        peopleAdapter.notifyDataSetChanged()
                     }
                 }
             })
@@ -119,6 +116,7 @@ class PeopleFragment : BaseFragment(), CardStackListener {
         }
         if (direction == Direction.Right) {
             archivePeople()
+            getAllPeople()
         }
     }
 
