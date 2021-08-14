@@ -2,6 +2,7 @@ package com.example.swipepeople.viewmodel
 
 import android.app.PendingIntent
 import androidx.lifecycle.*
+import com.example.swipepeople.data.model.ArchivedUser
 import com.example.swipepeople.data.model.PeopleResponse
 import com.example.swipepeople.repository.PeopleRepository
 import com.example.swipepeople.util.DataState
@@ -19,9 +20,25 @@ class PeopleViewModel @Inject constructor(
     val peopleLiveData: LiveData<DataState<PeopleResponse>>
         get() = _peopleLiveData
 
+    private var _archivedUsersLiveData: LiveData<List<ArchivedUser>> = MutableLiveData()
+    val archivedUsersLiveData: LiveData<List<ArchivedUser>>
+        get() = _archivedUsersLiveData
+
     suspend fun getAllPeople() {
         viewModelScope.launch {
             _peopleLiveData = peopleRepository.getAllPeople()
+        }
+    }
+
+    suspend fun archiveUser(archivedUser: ArchivedUser) {
+        viewModelScope.launch {
+            peopleRepository.archiveUser(archivedUser)
+        }
+    }
+
+    suspend fun getArchivedUsers() {
+        viewModelScope.launch {
+            _archivedUsersLiveData = peopleRepository.getAllArchivedUsers()
         }
     }
 

@@ -10,8 +10,11 @@ import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.example.swipepeople.R
+import com.example.swipepeople.data.model.ArchivedUser
+import com.example.swipepeople.data.model.User
 import com.example.swipepeople.databinding.FragmentPeopleBinding
 import com.example.swipepeople.util.DataState
 import com.example.swipepeople.view.adapter.PeopleAdapter
@@ -32,6 +35,7 @@ class PeopleFragment : BaseFragment(), CardStackListener {
 
     private val viewModel: PeopleViewModel by activityViewModels()
     private var adapter: PeopleAdapter? = null
+    private var archivedUser: ArchivedUser? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +54,10 @@ class PeopleFragment : BaseFragment(), CardStackListener {
         }
 
         binding.apply {
+            fab.setOnClickListener {
+                Navigation.findNavController(it)
+                    .navigate(PeopleFragmentDirections.actionArchivedPeople())
+            }
             stackView.layoutManager = layoutManager
             stackView.itemAnimator.apply {
                 if (this is DefaultItemAnimator) {
@@ -72,10 +80,27 @@ class PeopleFragment : BaseFragment(), CardStackListener {
 
                 }
                 if (it is DataState.Success) {
-                    adapter = PeopleAdapter(it.data.results)
-                    binding.stackView.adapter = adapter
+                    it.data.results.let { userList ->
+                        archivedUser = ArchivedUser(
+                            getName(userList.get(0).user),
+                            userList.get(0).user.picture,
+                            userList.get(0).user.phone
+                        )
+                        adapter = PeopleAdapter(userList)
+                        binding.stackView.adapter = adapter
+                    }
                 }
             })
+        }
+    }
+
+    private fun getName(user: User): String {
+        user.name.let { return "${it.title} ${it.first} ${it.last}" }
+    }
+
+    private fun archivePeople() = launch {
+        archivedUser?.let {
+            viewModel.archiveUser(it)
         }
     }
 
@@ -89,7 +114,12 @@ class PeopleFragment : BaseFragment(), CardStackListener {
     }
 
     override fun onCardSwiped(direction: Direction?) {
-
+        if (direction == Direction.Left) {
+            getAllPeople()
+        }
+        if (direction == Direction.Right) {
+            archivePeople()
+        }
     }
 
     override fun onCardRewound() {

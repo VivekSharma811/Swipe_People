@@ -1,5 +1,8 @@
 package com.example.swipepeople.hilt
 
+import android.content.Context
+import com.example.swipepeople.data.Dao
+import com.example.swipepeople.data.PeopleDb
 import com.example.swipepeople.network.ApiService
 import com.example.swipepeople.network.datasource.PeopleDatasource
 import com.example.swipepeople.network.datasource.PeopleDatasourceImpl
@@ -8,6 +11,7 @@ import com.example.swipepeople.repository.PeopleRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.reactivex.disposables.CompositeDisposable
 import okhttp3.OkHttpClient
@@ -51,17 +55,25 @@ object PeopleModule {
 
     @Singleton
     @Provides
+    fun provideDatabase(@ApplicationContext context: Context) = PeopleDb.getDatabase(context)
+
+    @Singleton
+    @Provides
+    fun provideDao(db: PeopleDb) = db.dao()
+
+    @Singleton
+    @Provides
     fun providePeopleDatasource(
         disposable: CompositeDisposable,
         apiService: ApiService
-    ) : PeopleDatasource {
+    ): PeopleDatasource {
         return PeopleDatasourceImpl(disposable, apiService)
     }
 
     @Singleton
     @Provides
-    fun providePeopleRepository(peopleDatasource: PeopleDatasource) : PeopleRepository {
-        return PeopleRepositoryImpl(peopleDatasource)
+    fun providePeopleRepository(peopleDatasource: PeopleDatasource, dao: Dao): PeopleRepository {
+        return PeopleRepositoryImpl(peopleDatasource, dao)
     }
 
 }
