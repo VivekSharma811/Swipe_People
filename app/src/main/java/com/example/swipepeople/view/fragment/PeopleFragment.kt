@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
@@ -70,12 +71,14 @@ class PeopleFragment : BaseFragment(), CardStackListener {
             getAllPeople()
             peopleLiveData.observe(viewLifecycleOwner, Observer {
                 if (it is DataState.Loading) {
-
+                    showProgress()
                 }
                 if (it is DataState.Error) {
-
+                    dismissProgress()
+                    Toast.makeText(context, it.exception, Toast.LENGTH_SHORT).show()
                 }
                 if (it is DataState.Success) {
+                    dismissProgress()
                     it.data.results.let { userList ->
                         archivedUser = ArchivedUser(
                             getName(userList.get(0).user),
