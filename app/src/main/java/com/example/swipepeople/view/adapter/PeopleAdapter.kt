@@ -1,18 +1,18 @@
 package com.example.swipepeople.view.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.example.swipepeople.R
 import com.example.swipepeople.data.model.Result
 import com.example.swipepeople.databinding.ItemCardViewBinding
+import com.example.swipepeople.view.ItemClickListener
 
 class PeopleAdapter(private val people: List<Result>) :
-    RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>() {
+    RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder>(), ItemClickListener {
 
     inner class PeopleViewHolder(val binding: ItemCardViewBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -30,7 +30,12 @@ class PeopleAdapter(private val people: List<Result>) :
 
     override fun onBindViewHolder(holder: PeopleViewHolder, position: Int) {
         holder.binding.user = people[position].user
+        holder.binding.listener = this
     }
 
     override fun getItemCount() = people.size
+
+    override fun onItemClicked(v: View, text: String) {
+        Toast.makeText(v.context, text, Toast.LENGTH_SHORT).show()
+    }
 }

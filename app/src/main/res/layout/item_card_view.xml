@@ -7,6 +7,10 @@
         <variable
             name="user"
             type="com.example.swipepeople.data.model.User" />
+
+        <variable
+            name="listener"
+            type="com.example.swipepeople.view.ItemClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,6 +43,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginTop="30dp"
+            android:onClick="@{(view) -> listener.onItemClicked(view, user.location.city)}"
             android:src="@drawable/icon_location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +54,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginEnd="25dp"
+            android:onClick="@{(view) -> listener.onItemClicked(view, user.dob)}"
             android:src="@drawable/icon_dob"
             app:layout_constraintEnd_toStartOf="@+id/ivLocation"
             app:layout_constraintTop_toTopOf="@+id/ivLocation" />
@@ -58,6 +64,7 @@
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginStart="25dp"
+            android:onClick="@{(view) -> listener.onItemClicked(view, user.phone)}"
             android:src="@drawable/icon_phone"
             app:layout_constraintStart_toEndOf="@+id/ivLocation"
             app:layout_constraintTop_toTopOf="@+id/ivLocation" />
